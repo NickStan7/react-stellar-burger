@@ -1,17 +1,20 @@
 import styles from "./app.module.css";
 import { data } from "../../utils/data";
+import AppHeader from "../AppHeader/AppHeader"
+import BurgerIngredients from "../../components/BurgerIngredients/BurgerIngredients"
+
 
 function App() {
-  return (
+  return (<>
     <div className={styles.app}>
-      <pre style={{
-      	margin: "auto",
-      	fontSize: "1.5rem"
-      }}>
-      	Измените src/components/app/app.jsx и сохраните для обновления.
-      </pre>
+      <AppHeader/>
     </div>
+    <div style={{ display: 'flex',justifyContent: "center"}}><BurgerIngredients/><BurgerIngredients/></div>
+    
+    </>
   );
 }
 
 export default App;
+
+

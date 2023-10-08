@@ -1,7 +1,5 @@
 .app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: #131316;
-  color: #f2f2f3;
+  display: flex; /* Размещаем элементы внутри в строку (горизонтально) */
+  flex-direction: column; /* Размещаем элементы внутри в столбец (вертикально) */
+  align-items: center; /* Выравниваем по центру по горизонтали */
 }
