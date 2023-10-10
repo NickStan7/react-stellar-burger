@@ -6,6 +6,7 @@ max-width: 272px;
 max-height: 208px;
 align-items: center;
 gap: 8px;
+position: relative;
 }
 
 .IngredientPrice {
@@ -25,3 +26,4 @@ font-style: normal;
 font-weight: 400;
 line-height: 24px; /* 150% */
 }
+

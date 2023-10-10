@@ -1,57 +1,107 @@
-import React from 'react'
-import {data} from '../../utils/data'
-import styles from "../BurgerIngredients/BurgerIngredients.module.css";
-import BurgerIngredient from "../../components/BurgerIngredient/BurgerIngredient"
+import React, { useState, useCallback } from "react";
+import {
+  Tab,
+  CurrencyIcon,
+  Counter,
+} from "@ya.praktikum/react-developer-burger-ui-components";
+import burgerIngredients from "./BurgerIngredients.module.css";
 
-function BurgerIngredients() {
-    return (
-      <div className={styles.BurgerIngredients}>
-        <h2 style={{ marginLeft: 0 }}>Соберите бургер</h2>
-        <div style={{ display: 'flex', borderBottom: '1px solid #ccc' }}>
-          <h3 style={{ minWidth: 200, textAlign: 'center' }}>Булки</h3>
-          <h3 style={{ minWidth: 200, textAlign: 'center' }}>Соусы</h3>
-          <h3 style={{ minWidth: 200, textAlign: 'center' }}>Начинки</h3>
-          {/* Сюда добавьте компоненты для отображения булок */}
-        </div>
-  
-        <h2 style={{ marginLeft: 0 }}>Булки</h2>
-  
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
-          <BurgerIngredient image={data[0].image} price={data[0].price} name ={data[0].name} />
-          <BurgerIngredient image={data[14].image} price={data[14].price} name ={data[14].name} />
-      
-        </div>
-  
-        <h2 style={{ marginLeft: 0 }}>Соусы</h2>
-  
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
-        <BurgerIngredient image={data[3].image} price={data[3].price} name ={data[3].name} />
-          <BurgerIngredient image={data[5].image} price={data[5].price} name ={data[5].name} />
-          <BurgerIngredient image={data[6].image} price={data[6].price} name ={data[6].name} />
-          <BurgerIngredient image={data[9].image} price={data[9].price} name ={data[9].name} />
-        </div>
-  
-        <h2 style={{ marginLeft: 0 }}>Начинки</h2>
-  
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
-        <BurgerIngredient image={data[1].image} price={data[1].price} name ={data[1].name} />
-        <BurgerIngredient image={data[2].image} price={data[2].price} name ={data[2].name} />
-        <BurgerIngredient image={data[4].image} price={data[4].price} name ={data[4].name} />
-        <BurgerIngredient image={data[7].image} price={data[7].price} name ={data[7].name} />
-        <BurgerIngredient image={data[8].image} price={data[8].price} name ={data[8].name} />
-        <BurgerIngredient image={data[10].image} price={data[10].price} name ={data[10].name} />
-        <BurgerIngredient image={data[11].image} price={data[11].price} name ={data[11].name} />
-        <BurgerIngredient image={data[12].image} price={data[12].price} name ={data[12].name} />
-        <BurgerIngredient image={data[13].image} price={data[13].price} name ={data[13].name} />
-        </div>
+import  Modal  from "../Modal/Modal";
+import  IngredientDetails  from "../IngredientDetails/IngredientDetails";
+import PropTypes from "prop-types"; // Импортируйте PropTypes
+
+
+ function BurgerIngredients({ data }) {
+  const [current, setCurrent] = React.useState("one");
+
+  return (
+    <section>
+      <h1 className={burgerIngredients.heading}>Соберите бургер</h1>
+
+      <div className={burgerIngredients.tab}>
+        <Tab value="one" active={current === "one"} onClick={setCurrent}>
+          Булки
+        </Tab>
+        <Tab value="two" active={current === "two"} onClick={setCurrent}>
+          Соусы
+        </Tab>
+        <Tab value="three" active={current === "three"} onClick={setCurrent}>
+          Начинки
+        </Tab>
       </div>
-    );
-  }
-  
-  
-  
-  
-  
-  
+
+      <section className={burgerIngredients.scroller}>
+        <IngredientsContainer
+          header="Булки"
+          cardsArr={data.filter((el) => {
+            return el.type === "bun";
+          })}
+        />
+        <IngredientsContainer
+          header="Соусы"
+          cardsArr={data.filter((el) => {
+            return el.type === "sauce";
+          })}
+        />
+        <IngredientsContainer
+          header="Начинки"
+          cardsArr={data.filter((el) => {
+            return el.type === "main";
+          })}
+        />
+      </section>
+    </section>
+  );
+}
+
+function IngredientsContainer({ header, cardsArr }) {
+  return (
+    <>
+      <h2 className={burgerIngredients.header}>{header}</h2>
+      <div className={burgerIngredients.container}>
+        {cardsArr.map((el) => {
+          return <Ingredient el={el} key={el._id} />;
+        })}
+      </div>
+    </>
+  );
+}
+
+function Ingredient({ el }) {
+  const [count, setCount] = useState(0);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const handleModalClose = useCallback(() => setModalIsOpen(false), []);
+
+  return (
+    <>
+      <section
+        className={burgerIngredients.ingredient}
+        onClick={() => setModalIsOpen(true)}
+      >
+        <img src={`${el.image}`} alt={el.name} />
+        {el.count > 0 && <Counter count={el.count} size="default" />}
+        <div className={burgerIngredients.price}>
+          <div className={burgerIngredients.number}>{el.price}</div>
+          <CurrencyIcon type="primary" />
+        </div>
+        <div className={burgerIngredients.description}>{el.name}</div>
+      </section>
+
+      {modalIsOpen && (
+        <Modal onClose={handleModalClose} title="Детали ингредиента">
+          <IngredientDetails el={el} />
+        </Modal>
+      )}
+    </>
+  );
+}
+
+
+
+// Определите PropTypes для свойства "data"
+BurgerIngredients.propTypes = {
+  data: PropTypes.array.isRequired, // Пример проверки для свойства "data"
+};
 
 export default BurgerIngredients
