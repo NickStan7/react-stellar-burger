@@ -3,17 +3,16 @@ import React, { useState, useCallback } from "react";
 import { data } from "../../utils/data";
 import styles from "../BurgerConstructor/BurgerConstructor.module.css";
 import Modal from "../Modal/Modal";
-
+import PropTypes from "prop-types";
 import {
   ConstructorElement,
   Button,
   CurrencyIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
-import OrderDetails  from "../OrderDetails/OrderDetails";
+import OrderDetails from "../OrderDetails/OrderDetails";
 
 function BurgerConstructor() {
-
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const handleModalClose = useCallback(() => setModalIsOpen(false), []);
   return (
@@ -75,7 +74,6 @@ function BurgerConstructor() {
           gap: 40,
           alignItems: "center",
           justifyContent: "end",
-
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -86,18 +84,18 @@ function BurgerConstructor() {
               fontSize: 48,
               fontStyle: "normal",
               fontWeight: 400,
-              
             }}
           >
             610
           </h2>{" "}
-          <CurrencyIcon style = {{minWidth: 36}} type="primary" />{" "}
+          <CurrencyIcon style={{ minWidth: 36 }} type="primary" />{" "}
         </div>
 
         <Button
           type="primary"
           size="medium"
           onClick={() => setModalIsOpen(true)}
+          htmlType="button"
         >
           Оформить заказ
         </Button>
@@ -108,8 +106,7 @@ function BurgerConstructor() {
           <OrderDetails />
         </Modal>
       )}
-      </div>
-    
+    </div>
   );
 }
 

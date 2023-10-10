@@ -5,13 +5,13 @@ import {
   Counter,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerIngredients from "./BurgerIngredients.module.css";
+import BurgerIngredient from "../BurgerIngredient/BurgerIngredient";
 
-import  Modal  from "../Modal/Modal";
-import  IngredientDetails  from "../IngredientDetails/IngredientDetails";
+import Modal from "../Modal/Modal";
+import IngredientDetails from "../IngredientDetails/IngredientDetails";
 import PropTypes from "prop-types"; // Импортируйте PropTypes
 
-
- function BurgerIngredients({ data }) {
+function BurgerIngredients({ data }) {
   const [current, setCurrent] = React.useState("one");
 
   return (
@@ -80,7 +80,7 @@ function Ingredient({ el }) {
         onClick={() => setModalIsOpen(true)}
       >
         <img src={`${el.image}`} alt={el.name} />
-        {el.count > 0 && <Counter count={el.count} size="default" />}
+        <Counter count={1} size="default" extraClass="m-1" />
         <div className={burgerIngredients.price}>
           <div className={burgerIngredients.number}>{el.price}</div>
           <CurrencyIcon type="primary" />
@@ -97,11 +97,9 @@ function Ingredient({ el }) {
   );
 }
 
-
-
 // Определите PropTypes для свойства "data"
 BurgerIngredients.propTypes = {
   data: PropTypes.array.isRequired, // Пример проверки для свойства "data"
 };
 
-export default BurgerIngredients
+export default BurgerIngredients;

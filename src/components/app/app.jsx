@@ -34,16 +34,13 @@ function App() {
       <AppHeader />
       <main className={styles.container}>
         {/* Передаем свойство "data" компонентам */}
-        <BurgerIngredients data={data} />
+        <BurgerIngredients  data={data} />
         <BurgerConstructor data={data} />
       </main>
     </div>
   );
 }
 
-// Определяем PropTypes для свойства "data"
-App.propTypes = {
-  data: PropTypes.array.isRequired, // data должен быть массивом и обязательным свойством
-};
+
 
 export default App;
