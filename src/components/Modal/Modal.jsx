@@ -27,7 +27,7 @@ function Modal({ children, onClose, title }) {
       <div className={modal.container}>
         <header className={modal.header}>
           <h2 className={modal.title}>{title}</h2>
-          <div className={modal.closeIcon}>
+          <div className={modal.close}>
             <CloseIcon type="primary" onClick={onClose} />
           </div>
         </header>
@@ -44,5 +44,5 @@ export default Modal;
 Modal.propTypes = {
   children: PropTypes.node.isRequired, // Пример проверки для свойства "children"
   onClose: PropTypes.func.isRequired, // Пример проверки для свойства "onClose"
-  title: PropTypes.string.isRequired, // Пример проверки для свойства "title"
+  title: PropTypes.string, // Пример проверки для свойства "title"
 };

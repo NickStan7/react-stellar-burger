@@ -8,6 +8,7 @@ import {
   ConstructorElement,
   Button,
   CurrencyIcon,
+  DragIcon, 
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
 import OrderDetails from "../OrderDetails/OrderDetails";
@@ -23,37 +24,36 @@ function BurgerConstructor() {
         text={data[0].name}
         thumbnail={data[0].image}
         price={data[0].price}
+
       />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          maxWidth: 580,
-          height: 464,
-          overflowY: "scroll",
-          gap: 16,
-        }}
-      >
+      
+     
+      <div className={styles.BurgerConstructorMiddle}>
+      <DragIcon type="primary" />
         <ConstructorElement
           text={data[1].name}
           price={data[1].price}
           thumbnail={data[1].image}
-        />
+        /> 
+        <DragIcon type="primary" />
         <ConstructorElement
           text={data[2].name}
           price={data[2].price}
           thumbnail={data[2].image}
         />
+        <DragIcon type="primary" />
         <ConstructorElement
           text={data[3].name}
           price={data[3].price}
           thumbnail={data[3].image}
         />
+        <DragIcon type="primary" />
         <ConstructorElement
           text={data[4].name}
           price={data[4].price}
           thumbnail={data[4].image}
         />
+        <DragIcon type="primary" />
         <ConstructorElement
           text={data[5].name}
           price={data[5].price}
@@ -68,16 +68,8 @@ function BurgerConstructor() {
         thumbnail={data[0].image}
       />
 
-      <div
-        style={{
-          display: "flex",
-          gap: 40,
-          alignItems: "center",
-          justifyContent: "end",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {" "}
+      <div className={styles.pricePlusOrder}>
+        <div className={styles.price}>
           <h2
             style={{
               fontFamily: "Iceland",
@@ -87,8 +79,8 @@ function BurgerConstructor() {
             }}
           >
             610
-          </h2>{" "}
-          <CurrencyIcon style={{ minWidth: 36 }} type="primary" />{" "}
+          </h2>
+          <CurrencyIcon className={styles.image} type="primary" />
         </div>
 
         <Button
@@ -111,9 +103,18 @@ function BurgerConstructor() {
 }
 
 // Определите PropTypes для свойств
+
 BurgerConstructor.propTypes = {
-  data: PropTypes.array.isRequired, // Пример проверки для свойства "data"
-  modalIsOpen: PropTypes.bool.isRequired, // Пример проверки для свойства "modalIsOpen"
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+      image: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  modalIsOpen: PropTypes.bool.isRequired,
 };
 
 export default BurgerConstructor;
