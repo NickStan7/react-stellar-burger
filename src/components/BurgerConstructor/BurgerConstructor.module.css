@@ -1,0 +1,29 @@
+.BurgerConstructor {
+  justify-content: center;
+    display: flex;
+    flex-direction: column;
+  width: 580px;
+  margin-left: 40px;
+  margin-top: 100px;
+
+    height: 650px;
+     overflow-y: scroll;
+
+     gap: 16px;
+
+     
+}
+
+.BurgerConstructor::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+  }
+  
+  /* Style the thumb (the draggable part of the scrollbar) */
+  .BurgerConstructor::-webkit-scrollbar-thumb {
+    border: 3px solid var(--text-dark-grey-secondary-text, #8585AD);
+background: var(--text-dark-grey-secondary-text, #8585AD);
+width: 8px;
+  
+    
+  }
+  
