@@ -40,7 +40,8 @@ function Modal({ children, onClose, title }) {
 
 export default Modal;
 
-// Определите PropTypes для свойств
+
+// Определите PropTypes для свойствa
 Modal.propTypes = {
   children: PropTypes.node.isRequired, // Пример проверки для свойства "children"
   onClose: PropTypes.func.isRequired, // Пример проверки для свойства "onClose"

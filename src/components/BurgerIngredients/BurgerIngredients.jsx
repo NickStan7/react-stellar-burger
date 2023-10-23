@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useRef, useMemo  } from "react";
+
+import React, { useState, useCallback, useRef, useMemo, useEffect  } from "react";
 import {
   Tab,
   CurrencyIcon,
@@ -9,33 +10,59 @@ import burgerIngredients from "./BurgerIngredients.module.css";
 import Modal from "../Modal/Modal";
 import IngredientDetails from "../IngredientDetails/IngredientDetails";
 import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+import { useInView } from "react-intersection-observer";
+import { useDrag } from "react-dnd";
+import {
+  getIngredientInfo,
+  clearIngredientInfo,
+} from "../../services/actions/ingridientDetails";
 
-function BurgerIngredients({ data }) {
-  const [current, setCurrent] = useState("one");
-  const refOne = useRef(null);
-  const refTwo = useRef(null);
-  const refThree = useRef(null);
+const getVisibleTab = (bunsInView, saucesInView, mainsInView) => {
+  if (bunsInView) return "buns";
+  if (saucesInView) return "sauce";
+  if (mainsInView) return "main";
+};
 
+export function BurgerIngredients() {
+  const [currentTab, setCurrentTab] = React.useState("buns");
+  const ingredients = useSelector((store) => store.ingredientsReducer);
 
-  const filteredBunItems = useMemo(() => data.filter((el) => el.type === "bun"), [data]);
-  const filteredSauceItems = useMemo(() => data.filter((el) => el.type === "sauce"), [data]);
-  const filteredMainItems = useMemo(() => data.filter((el) => el.type === "main"), [data]);
+  const bunsObj = useInView({ threshold: 0 });
+  const bunsRef = bunsObj.ref;
+  const bunsInView = bunsObj.inView;
 
-  const handleButtonClick = (value) => {
-    setCurrent(value);
-    switch (value) {
-      case "one":
-        refOne.current.scrollIntoView({ block: "start", behavior: "smooth" });
-        break;
-      case "two":
-        refTwo.current.scrollIntoView({ block: "start", behavior: "smooth" });
-        break;
-      case "three":
-        refThree.current.scrollIntoView({ block: "start", behavior: "smooth" });
-        break;
-      default:
-        break;
-    }
+  const saucesObj = useInView({ threshold: 0 });
+  const saucesRef = saucesObj.ref;
+  const saucesInView = saucesObj.inView;
+
+  const mainsObj = useInView({ threshold: 0 });
+  const mainsRef = mainsObj.ref;
+  const mainsInView = mainsObj.inView;
+
+  useEffect(() => {
+    setCurrentTab(getVisibleTab(bunsInView, saucesInView, mainsInView));
+  }, [bunsInView, saucesInView, mainsInView]);
+
+  const bunsArray = useMemo(
+    () => ingredients.items.filter((el) => el.type === "bun"),
+    [ingredients.items]
+  );
+
+  const saucesArray = useMemo(
+    () => ingredients.items.filter((el) => el.type === "sauce"),
+    [ingredients.items]
+  );
+
+  const mainsArray = useMemo(
+    () => ingredients.items.filter((el) => el.type === "main"),
+    [ingredients.items]
+  );
+
+  const onTabClick = (tab) => {
+    setCurrentTab(tab);
+    const element = document.getElementById(tab);
+    if (element) element.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -43,59 +70,111 @@ function BurgerIngredients({ data }) {
       <h1 className={burgerIngredients.heading}>Соберите бургер</h1>
 
       <div className={burgerIngredients.tab}>
-        <Tab value="one" active={current === "one"} onClick={() => handleButtonClick("one")}>
+        <Tab
+          value="buns"
+          active={currentTab === "buns"}
+          onClick={() => {
+            onTabClick("buns");
+          }}
+        >
           Булки
         </Tab>
-        <Tab value="two" active={current === "two"} onClick={() => handleButtonClick("two")}>
+        <Tab
+          value="sauce"
+          active={currentTab === "sauce"}
+          onClick={() => {
+            onTabClick("sauce");
+          }}
+        >
           Соусы
         </Tab>
-        <Tab value="three" active={current === "three"} onClick={() => handleButtonClick("three")}>
+        <Tab
+          value="main"
+          active={currentTab === "main"}
+          onClick={() => {
+            onTabClick("main");
+          }}
+        >
           Начинки
         </Tab>
       </div>
 
-     
       <section className={burgerIngredients.scroller}>
-        <div ref={refOne}>
-          <IngredientsContainer header="Булки" cardsArr={filteredBunItems} />
-        </div>
-        <div ref={refTwo}>
-          <IngredientsContainer header="Соусы" cardsArr={filteredSauceItems} />
-        </div>
-        <div ref={refThree}>
-          <IngredientsContainer header="Начинки" cardsArr={filteredMainItems} />
-        </div>
+        <IngredientsContainer
+          header="Булки"
+          id="buns"
+          cardsArr={bunsArray}
+          myRef={bunsRef}
+        />
+        <IngredientsContainer
+          header="Соусы"
+          id="sauce"
+          cardsArr={saucesArray}
+          myRef={saucesRef}
+        />
+        <IngredientsContainer
+          header="Начинки"
+          id="main"
+          cardsArr={mainsArray}
+          myRef={mainsRef}
+        />
       </section>
     </section>
   );
 }
 
-function IngredientsContainer({ header, cardsArr }) {
+function IngredientsContainer({ header, cardsArr, id, myRef }) {
   return (
-    <>
-      <h2 className={burgerIngredients.header}>{header}</h2>
+    <div ref={myRef}>
+      <h2 className={burgerIngredients.header} id={id}>
+        {header}
+      </h2>
       <div className={burgerIngredients.container}>
         {cardsArr.map((el) => {
           return <Ingredient el={el} key={el._id} />;
         })}
       </div>
-    </>
+    </div>
   );
 }
 
 function Ingredient({ el }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
-  const handleModalClose = useCallback(() => setModalIsOpen(false), []);
+  const openIngredientDetailModal = () => {
+    dispatch(getIngredientInfo(el));
+    setModalIsOpen(true);
+  };
+
+  const handleModalClose = useCallback(() => {
+    dispatch(clearIngredientInfo());
+    setModalIsOpen(false);
+  }, [dispatch]);
+
+  const id = el["_id"];
+
+  const [, dragRef] = useDrag({
+    type: "ingredient",
+    item: { id },
+    collect: (monitor) => ({
+      isDrag: monitor.isDragging(),
+    }),
+  });
 
   return (
     <>
       <section
         className={burgerIngredients.ingredient}
-        onClick={() => setModalIsOpen(true)}
+        onClick={openIngredientDetailModal}
+        ref={dragRef}
       >
         <img src={`${el.image}`} alt={el.name} />
-        <Counter count={1} size="default" extraClass="m-1" />
+
+        {"orderedQuantity" in el && el.orderedQuantity > 0 && (
+          <Counter count={el.orderedQuantity} size="default" />
+        )}
+
         <div className={burgerIngredients.price}>
           <div className={burgerIngredients.number}>{el.price}</div>
           <CurrencyIcon type="primary" />
@@ -105,7 +184,7 @@ function Ingredient({ el }) {
 
       {modalIsOpen && (
         <Modal onClose={handleModalClose} title="Детали ингредиента">
-          <IngredientDetails el={el} />
+          <IngredientDetails />
         </Modal>
       )}
     </>

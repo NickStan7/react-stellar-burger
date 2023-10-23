@@ -5,7 +5,9 @@ export function ModalOverlay({ onClick }) {
   return <div onClick={onClick} className={modalOverlay.modalOverlay}></div>;
 }
 
-// Определите PropTypes для свойства "onClick"
+// Определите PropTypes для свойства "onClickkeypress"
 ModalOverlay.propTypes = {
   onClick: PropTypes.func.isRequired, // Пример проверки для свойства "onClick"
 };
+
+

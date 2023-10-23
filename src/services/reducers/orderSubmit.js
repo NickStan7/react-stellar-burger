@@ -12,8 +12,8 @@ const orderDetailsState = {
   error: "",
 };
 
-// Создаем редуктор `orderDetailsReducer` для управления состоянием деталей заказа
-export const orderDetailsReducer = (state = orderDetailsState, action) => {
+// Создаем редуктор `orderReducer` для управления состоянием деталей заказа
+export const orderReducer = (state = orderDetailsState, action) => {
   switch (action.type) {
     case ORDER_REQUEST: {
       // Обрабатываем начало запроса

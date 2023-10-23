@@ -1,7 +1,9 @@
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 import combineReducers from "./reducers";
-import { createStore } from 'redux';
-import reducer from './rootReducer'; // Замените 'ваш_редюсер' на путь к вашему редюсеру
 
-const store = createStore(combineReducers);
-
-export default store;
+import { composeWithDevTools } from "@redux-devtools/extension";
+export const store = createStore(
+  combineReducers,
+  composeWithDevTools(applyMiddleware(thunk))
+);

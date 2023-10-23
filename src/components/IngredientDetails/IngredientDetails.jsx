@@ -1,8 +1,11 @@
 import React from "react";
 import ingredientDetails from "./IngredientDetails.module.css";
 import PropTypes from "prop-types"; // Импортируйте PropTypes
+import {useSelector} from "react-redux";
 
-function IngredientDetails({ el }) {
+function IngredientDetails() {
+ 
+  const el = useSelector((store) => store.ingredientDetailsReducer);
   return (
     <div className={ingredientDetails.container}>
       <img src={el.image} className={ingredientDetails.img} alt={el.name} />
@@ -28,6 +31,7 @@ function IngredientDetails({ el }) {
     </div>
   );
 }
+export default IngredientDetails;
 
 IngredientDetails.propTypes = {
   el: PropTypes.shape({
@@ -39,4 +43,4 @@ IngredientDetails.propTypes = {
     carbohydrates: PropTypes.number.isRequired, // Свойство carbohydrates должно быть числом и обязательным
   }).isRequired,
 };
-export default IngredientDetails;
+
