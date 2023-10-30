@@ -10,7 +10,7 @@ import styles from "../AppHeader/AppHeader.module.css";
 
 function AppHeader() {
   return (
-    <div className={styles.appHeader}>
+    <header className={styles.appHeader}>
       <div className={styles.constructorOrderFeed}>
       <a href="#" className={styles.constructor}>
           <BurgerIcon type="primary"/>
@@ -28,7 +28,7 @@ function AppHeader() {
         <ProfileIcon type="secondary" />
         <span className="pr-5 ml-2">Личный кабинет</span>
       </a>
-    </div>
+    </header>
   );
 }
 export default AppHeader;

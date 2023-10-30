@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect,useMemo, useRef  } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 
 import burgerConstructor from "./BurgerConstructor.module.css";
 import Modal from "../Modal/Modal";
@@ -7,7 +13,7 @@ import {
   ConstructorElement,
   Button,
   CurrencyIcon,
-  DragIcon, 
+  DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -24,8 +30,9 @@ import {
   ADD_COMPONENT,
   REMOVE_COMPONENT,
   CHANGE_COMPONENT_POSITION,
-
 } from "../../services/actions/constructor";
+
+import { v4 as uuidv4 } from "uuid";
 
 export function BurgerConstructor() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -87,6 +94,7 @@ export function BurgerConstructor() {
           <CurrencyIcon type="primary" />
         </div>
         <Button
+          htmlType="button"
           type="primary"
           size="medium"
           onClick={() => {
@@ -148,7 +156,7 @@ function ConstructorIngredient({ ingredientsArray, outerBun, setTotalPrice }) {
   });
 
   return (
-    <div className={burgerConstructor.scroller} ref={dropTarget}>
+    <div ref={dropTarget}>
       {!outerBun && ingredientsArray.length === 0 && (
         <h3 className={burgerConstructor.empty}>Выберите ингредиенты</h3>
       )}
@@ -164,11 +172,12 @@ function ConstructorIngredient({ ingredientsArray, outerBun, setTotalPrice }) {
           />
         </div>
       )}
-
-      <div>
-        {ingredientsArray.map((el, i) => {
-          return <InnerIngredient index={i} el={el} key={i} />;
-        })}
+      <div className={burgerConstructor.scroller} ref={dropTarget}>
+        <div>
+          {ingredientsArray.map((el, i) => {
+            return <InnerIngredient index={i} el={el} key={el.uniqueId} />;
+          })}
+        </div>
       </div>
 
       {outerBun && (
@@ -270,20 +279,5 @@ const InnerIngredient = ({ index, el }) => {
   );
 };
 
-
-// Определите PropTypes для свойств
-
-BurgerConstructor.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      image: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  modalIsOpen: PropTypes.bool.isRequired,
-};
 
 export default BurgerConstructor;

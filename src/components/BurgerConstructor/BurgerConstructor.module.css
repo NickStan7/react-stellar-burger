@@ -63,7 +63,7 @@
 
 .scroller {
   gap: 10px;
-  height: 470px;
+  height: 300px;
   width: 584px;
   overflow-y: scroll;
   scrollbar-width: thin;
@@ -74,3 +74,6 @@
   margin-top: 15px;
 }
 
+.middleIngridients {
+  height: 470px;
+}
