@@ -1,29 +1,76 @@
-.BurgerConstructor {
-  justify-content: center;
-    display: flex;
-    flex-direction: column;
-  width: 580px;
-  margin-left: 40px;
-  margin-top: 100px;
-
-    height: 650px;
-     overflow-y: scroll;
-
-     gap: 16px;
-
-     
+.section {
+  box-sizing: border-box;
+  padding-top: 100px;
+  padding-left: 16px;
+  padding-right: 16px;
+  width: 600px;
+  font-family: "JetBrains Mono";
+  background: #131316;
 }
 
-.BurgerConstructor::-webkit-scrollbar {
-    width: 8px; /* Width of the scrollbar */
-  }
-  
-  /* Style the thumb (the draggable part of the scrollbar) */
-  .BurgerConstructor::-webkit-scrollbar-thumb {
-    border: 3px solid var(--text-dark-grey-secondary-text, #8585AD);
-background: var(--text-dark-grey-secondary-text, #8585AD);
-width: 8px;
-  
-    
-  }
-  
+
+.margin {
+    gap: 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 0px 8px 8px 32px;
+}
+
+.container {
+  align-items: center;
+  gap: 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  box-sizing: border-box;
+  margin-right: 16px;
+  margin-bottom: 16px;
+}
+
+.total {
+  display: flex;
+  flex-direction: row;
+  margin-right: 25px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 40px;
+}
+
+.ammount {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.price {
+  font-family: "Iceland";
+  margin-right: 8px;
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 36px;
+
+}
+
+.empty {
+  margin: auto;
+  text-align: center;
+  font-size: 18px;
+}
+
+.scroller {
+  gap: 10px;
+  height: 470px;
+  width: 584px;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  margin-bottom: 20px;
+  margin-top: 15px;
+}
+

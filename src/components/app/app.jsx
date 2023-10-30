@@ -1,46 +1,32 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types"; // Импортируем PropTypes
-import styles from "./app.module.css";
-import axios from "axios";
-import AppHeader from "../AppHeader/AppHeader";
-import BurgerIngredients from "../BurgerIngredients/BurgerIngredients";
-import BurgerConstructor from "../BurgerConstructor/BurgerConstructor";
+import { useEffect } from "react";
 
-function App() {
-  const [data, setData] = useState([]);
+import app from "./app.module.css";
 
-  const apiUrl = "https://norma.nomoreparties.space/api/ingredients";
+import AppHeader  from "../AppHeader/AppHeader";
+import { BurgerIngredients } from "../BurgerIngredients/BurgerIngredients";
+import { BurgerConstructor } from "../BurgerConstructor/BurgerConstructor";
+
+import { useDispatch } from "react-redux";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { getIngredientsFunc } from "../../services/actions/getIngridients";
+
+export function App() {
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const config = {
-      method: "get",
-      url: apiUrl,
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response) {
-        const data = JSON.parse(JSON.stringify(response?.data?.data));
-
-        setData(data ?? []);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    dispatch(getIngredientsFunc());
   }, []);
 
   return (
-    <div className={styles.app}>
+    <div className={app.app}>
       <AppHeader />
-      <main className={styles.container}>
-        {/* Передаем свойство "data" компонентам */}
-        <BurgerIngredients  data={data} />
-        <BurgerConstructor data={data} />
+      <main className={app.container}>
+        <DndProvider backend={HTML5Backend}>
+          <BurgerIngredients />
+          <BurgerConstructor />
+        </DndProvider>
       </main>
     </div>
   );
 }
-
-
-
-export default App;

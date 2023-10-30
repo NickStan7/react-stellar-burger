@@ -1,31 +1,100 @@
-import React, { useState, useCallback } from "react";
+
+import React, { useState, useCallback, useRef, useMemo, useEffect  } from "react";
 import {
   Tab,
   CurrencyIcon,
   Counter,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerIngredients from "./BurgerIngredients.module.css";
-import BurgerIngredient from "../BurgerIngredient/BurgerIngredient";
 
 import Modal from "../Modal/Modal";
 import IngredientDetails from "../IngredientDetails/IngredientDetails";
-import PropTypes from "prop-types"; // Импортируйте PropTypes
+import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+import { useInView } from "react-intersection-observer";
+import { useDrag } from "react-dnd";
+import {
+  getIngredientInfo,
+  clearIngredientInfo,
+} from "../../services/actions/ingridientDetails";
 
-function BurgerIngredients({ data }) {
-  const [current, setCurrent] = React.useState("one");
+const getVisibleTab = (bunsInView, saucesInView, mainsInView) => {
+  if (bunsInView) return "buns";
+  if (saucesInView) return "sauce";
+  if (mainsInView) return "main";
+};
+
+export function BurgerIngredients() {
+  const [currentTab, setCurrentTab] = React.useState("buns");
+  const ingredients = useSelector((store) => store.ingredientsReducer);
+
+  const bunsObj = useInView({ threshold: 0 });
+  const bunsRef = bunsObj.ref;
+  const bunsInView = bunsObj.inView;
+
+  const saucesObj = useInView({ threshold: 0 });
+  const saucesRef = saucesObj.ref;
+  const saucesInView = saucesObj.inView;
+
+  const mainsObj = useInView({ threshold: 0 });
+  const mainsRef = mainsObj.ref;
+  const mainsInView = mainsObj.inView;
+
+  useEffect(() => {
+    setCurrentTab(getVisibleTab(bunsInView, saucesInView, mainsInView));
+  }, [bunsInView, saucesInView, mainsInView]);
+
+  const bunsArray = useMemo(
+    () => ingredients.items.filter((el) => el.type === "bun"),
+    [ingredients.items]
+  );
+
+  const saucesArray = useMemo(
+    () => ingredients.items.filter((el) => el.type === "sauce"),
+    [ingredients.items]
+  );
+
+  const mainsArray = useMemo(
+    () => ingredients.items.filter((el) => el.type === "main"),
+    [ingredients.items]
+  );
+
+  const onTabClick = (tab) => {
+    setCurrentTab(tab);
+    const element = document.getElementById(tab);
+    if (element) element.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <section>
       <h1 className={burgerIngredients.heading}>Соберите бургер</h1>
 
       <div className={burgerIngredients.tab}>
-        <Tab value="one" active={current === "one"} onClick={setCurrent}>
+        <Tab
+          value="buns"
+          active={currentTab === "buns"}
+          onClick={() => {
+            onTabClick("buns");
+          }}
+        >
           Булки
         </Tab>
-        <Tab value="two" active={current === "two"} onClick={setCurrent}>
+        <Tab
+          value="sauce"
+          active={currentTab === "sauce"}
+          onClick={() => {
+            onTabClick("sauce");
+          }}
+        >
           Соусы
         </Tab>
-        <Tab value="three" active={current === "three"} onClick={setCurrent}>
+        <Tab
+          value="main"
+          active={currentTab === "main"}
+          onClick={() => {
+            onTabClick("main");
+          }}
+        >
           Начинки
         </Tab>
       </div>
@@ -33,54 +102,79 @@ function BurgerIngredients({ data }) {
       <section className={burgerIngredients.scroller}>
         <IngredientsContainer
           header="Булки"
-          cardsArr={data.filter((el) => {
-            return el.type === "bun";
-          })}
+          id="buns"
+          cardsArr={bunsArray}
+          myRef={bunsRef}
         />
         <IngredientsContainer
           header="Соусы"
-          cardsArr={data.filter((el) => {
-            return el.type === "sauce";
-          })}
+          id="sauce"
+          cardsArr={saucesArray}
+          myRef={saucesRef}
         />
         <IngredientsContainer
           header="Начинки"
-          cardsArr={data.filter((el) => {
-            return el.type === "main";
-          })}
+          id="main"
+          cardsArr={mainsArray}
+          myRef={mainsRef}
         />
       </section>
     </section>
   );
 }
 
-function IngredientsContainer({ header, cardsArr }) {
+function IngredientsContainer({ header, cardsArr, id, myRef }) {
   return (
-    <>
-      <h2 className={burgerIngredients.header}>{header}</h2>
+    <div ref={myRef}>
+      <h2 className={burgerIngredients.header} id={id}>
+        {header}
+      </h2>
       <div className={burgerIngredients.container}>
         {cardsArr.map((el) => {
           return <Ingredient el={el} key={el._id} />;
         })}
       </div>
-    </>
+    </div>
   );
 }
 
 function Ingredient({ el }) {
-  const [count, setCount] = useState(0);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
-  const handleModalClose = useCallback(() => setModalIsOpen(false), []);
+  const openIngredientDetailModal = () => {
+    dispatch(getIngredientInfo(el));
+    setModalIsOpen(true);
+  };
+
+  const handleModalClose = useCallback(() => {
+    dispatch(clearIngredientInfo());
+    setModalIsOpen(false);
+  }, [dispatch]);
+
+  const id = el["_id"];
+
+  const [, dragRef] = useDrag({
+    type: "ingredient",
+    item: { id },
+    collect: (monitor) => ({
+      isDrag: monitor.isDragging(),
+    }),
+  });
 
   return (
     <>
       <section
         className={burgerIngredients.ingredient}
-        onClick={() => setModalIsOpen(true)}
+        onClick={openIngredientDetailModal}
+        ref={dragRef}
       >
         <img src={`${el.image}`} alt={el.name} />
-        <Counter count={1} size="default" extraClass="m-1" />
+
+        {"orderedQuantity" in el && el.orderedQuantity > 0 && (
+          <Counter count={el.orderedQuantity} size="default" />
+        )}
+
         <div className={burgerIngredients.price}>
           <div className={burgerIngredients.number}>{el.price}</div>
           <CurrencyIcon type="primary" />
@@ -90,16 +184,26 @@ function Ingredient({ el }) {
 
       {modalIsOpen && (
         <Modal onClose={handleModalClose} title="Детали ингредиента">
-          <IngredientDetails el={el} />
+          <IngredientDetails />
         </Modal>
       )}
     </>
   );
 }
 
-// Определите PropTypes для свойства "data"
+
 BurgerIngredients.propTypes = {
-  data: PropTypes.array.isRequired, // Пример проверки для свойства "data"
+  data: PropTypes.arrayOf(PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    image: PropTypes.string.isRequired,
+    image_mobile: PropTypes.string.isRequired,
+    image_large: PropTypes.string.isRequired,
+    __v: PropTypes.number.isRequired,
+  })).isRequired,
+  modalIsOpen: PropTypes.bool.isRequired,
 };
 
 export default BurgerIngredients;
