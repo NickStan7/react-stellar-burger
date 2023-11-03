@@ -34,6 +34,19 @@ import {
 
 import { v4 as uuidv4 } from "uuid";
 
+// Обновленный action creator
+export const addIngredient = (item) => {
+  const ingredientWithUUID = {
+    ...item,
+    uniqueId: uuidv4()
+  };
+
+  return {
+    type: ADD_COMPONENT,
+    payload: ingredientWithUUID
+  };
+}
+
 export function BurgerConstructor() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -89,8 +102,8 @@ export function BurgerConstructor() {
       />
 
       <div className={burgerConstructor.total}>
-        <div className={burgerConstructor.ammount}>
-          <div className={burgerConstructor?.price}>{totalPrice}</div>
+        <div className={burgerConstructor.amount}>
+          <div className={burgerConstructor.price}>{totalPrice}</div>
           <CurrencyIcon type="primary" />
         </div>
         <Button
@@ -143,18 +156,14 @@ function ConstructorIngredient({ ingredientsArray, outerBun, setTotalPrice }) {
       );
 
       if (ingredient) {
-        dispatch({
-          type: ADD_COMPONENT,
-          payload: ingredient,
-        });
+        dispatch(addIngredient(ingredient)); // Используем обновленный action creator
         dispatch({
           type: INCREMENT_INGREDIENT_QUANTITY,
           payload: itemId.id,
         });
       }
-    },
+    }
   });
-
   return (
     <div ref={dropTarget}>
       {!outerBun && ingredientsArray.length === 0 && (
@@ -203,7 +212,7 @@ const InnerIngredient = ({ index, el }) => {
     item: { id: el._id },
     collect: (monitor) => ({
       isDrag: monitor.isDragging(),
-    }),
+    })
   });
 
   const [{ handlerId }, drop] = useDrop({
@@ -248,7 +257,7 @@ const InnerIngredient = ({ index, el }) => {
       }
 
       item.index = hoverIndex;
-    },
+    }
   });
 
   const removeIngredient = (ingredientId, index) => {
@@ -278,6 +287,5 @@ const InnerIngredient = ({ index, el }) => {
     </div>
   );
 };
-
 
 export default BurgerConstructor;
