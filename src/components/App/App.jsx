@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import app from "./app.module.css";
+import app from "./App.module.css";
 
 import AppHeader  from "../AppHeader/AppHeader";
 import { BurgerIngredients } from "../BurgerIngredients/BurgerIngredients";

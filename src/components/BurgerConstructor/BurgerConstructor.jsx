@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect,useMemo, useRef  } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 
 import burgerConstructor from "./BurgerConstructor.module.css";
 import Modal from "../Modal/Modal";
@@ -7,7 +13,7 @@ import {
   ConstructorElement,
   Button,
   CurrencyIcon,
-  DragIcon, 
+  DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -24,8 +30,22 @@ import {
   ADD_COMPONENT,
   REMOVE_COMPONENT,
   CHANGE_COMPONENT_POSITION,
-
 } from "../../services/actions/constructor";
+
+import { v4 as uuidv4 } from "uuid";
+
+// Обновленный action creator
+export const addIngredient = (item) => {
+  const ingredientWithUUID = {
+    ...item,
+    uniqueId: uuidv4()
+  };
+
+  return {
+    type: ADD_COMPONENT,
+    payload: ingredientWithUUID
+  };
+}
 
 export function BurgerConstructor() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -82,11 +102,12 @@ export function BurgerConstructor() {
       />
 
       <div className={burgerConstructor.total}>
-        <div className={burgerConstructor.ammount}>
-          <div className={burgerConstructor?.price}>{totalPrice}</div>
+        <div className={burgerConstructor.amount}>
+          <div className={burgerConstructor.price}>{totalPrice}</div>
           <CurrencyIcon type="primary" />
         </div>
         <Button
+          htmlType="button"
           type="primary"
           size="medium"
           onClick={() => {
@@ -135,20 +156,16 @@ function ConstructorIngredient({ ingredientsArray, outerBun, setTotalPrice }) {
       );
 
       if (ingredient) {
-        dispatch({
-          type: ADD_COMPONENT,
-          payload: ingredient,
-        });
+        dispatch(addIngredient(ingredient)); // Используем обновленный action creator
         dispatch({
           type: INCREMENT_INGREDIENT_QUANTITY,
           payload: itemId.id,
         });
       }
-    },
+    }
   });
-
   return (
-    <div className={burgerConstructor.scroller} ref={dropTarget}>
+    <div ref={dropTarget}>
       {!outerBun && ingredientsArray.length === 0 && (
         <h3 className={burgerConstructor.empty}>Выберите ингредиенты</h3>
       )}
@@ -164,11 +181,12 @@ function ConstructorIngredient({ ingredientsArray, outerBun, setTotalPrice }) {
           />
         </div>
       )}
-
-      <div>
-        {ingredientsArray.map((el, i) => {
-          return <InnerIngredient index={i} el={el} key={i} />;
-        })}
+      <div className={burgerConstructor.scroller} ref={dropTarget}>
+        <div>
+          {ingredientsArray.map((el, i) => {
+            return <InnerIngredient index={i} el={el} key={el.uniqueId} />;
+          })}
+        </div>
       </div>
 
       {outerBun && (
@@ -194,7 +212,7 @@ const InnerIngredient = ({ index, el }) => {
     item: { id: el._id },
     collect: (monitor) => ({
       isDrag: monitor.isDragging(),
-    }),
+    })
   });
 
   const [{ handlerId }, drop] = useDrop({
@@ -239,7 +257,7 @@ const InnerIngredient = ({ index, el }) => {
       }
 
       item.index = hoverIndex;
-    },
+    }
   });
 
   const removeIngredient = (ingredientId, index) => {
@@ -268,22 +286,6 @@ const InnerIngredient = ({ index, el }) => {
       />
     </div>
   );
-};
-
-
-// Определите PropTypes для свойств
-
-BurgerConstructor.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      image: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  modalIsOpen: PropTypes.bool.isRequired,
 };
 
 export default BurgerConstructor;

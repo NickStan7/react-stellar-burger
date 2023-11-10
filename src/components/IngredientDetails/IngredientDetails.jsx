@@ -33,14 +33,4 @@ function IngredientDetails() {
 }
 export default IngredientDetails;
 
-IngredientDetails.propTypes = {
-  el: PropTypes.shape({
-    image: PropTypes.string.isRequired, // Свойство image должно быть строкой и обязательным
-    name: PropTypes.string.isRequired, // Свойство name должно быть строкой и обязательным
-    calories: PropTypes.number.isRequired, // Свойство calories должно быть числом и обязательным
-    proteins: PropTypes.number.isRequired, // Свойство proteins должно быть числом и обязательным
-    fat: PropTypes.number.isRequired, // Свойство fat должно быть числом и обязательным
-    carbohydrates: PropTypes.number.isRequired, // Свойство carbohydrates должно быть числом и обязательным
-  }).isRequired,
-};
 
